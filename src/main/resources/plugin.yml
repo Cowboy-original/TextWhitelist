@@ -1,0 +1,12 @@
+name: TextWhitelist
+version: 1.0
+main: com.unicraft.whitelist.TextWhitelist
+api-version: '1.20'
+author: Cowboy-original
+description: Kullanici adlarini bir .txt dosyasindan okuyan basit bir whitelist eklentisi.
+commands:
+  whitelistxt:
+    description: TextWhitelist eklentisinin ana komutu.
+    aliases: [wltxt]
+    permission: textwhitelist.admin
+    permission-message: Bu komutu kullanmak icin yetkiniz yok.

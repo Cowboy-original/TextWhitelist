@@ -3,7 +3,7 @@ package com.unicraft.whitelist;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent; 
 import net.kyori.adventure.text.Component;
 
 import java.io.File;
@@ -23,42 +23,35 @@ public class LoginListener implements Listener {
         loadWhitelistFromFile();
     }
 
+    // --- METODUN TAMAMI DEĞİŞTİ ---
+    // Artık daha erken çalışan AsyncPlayerPreLoginEvent'i dinliyoruz.
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerLogin(PlayerLoginEvent event) {
-        String playerName = event.getPlayer().getName();
+    public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        // Bu olayda oyuncu adı event.getName() ile alınır.
+        String playerName = event.getName();
+
+        // Kontrol mantığı aynı.
         if (!whitelistedNames.contains(playerName)) {
-            event.kickMessage(Component.text("§cBu sunucuya girmek için listede olmaniz gerekmektedir."));
-            plugin.getLogger().info(playerName + " adli oyuncu listede olmadigi icin girisi engellendi.");
+            // Oyuncuyu atmak için bu olayda disallow metodu kullanılır.
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
+                    Component.text("§cBu sunucuya girmek için listede olmaniz gerekmektedir."));
+
+            plugin.getLogger().info(playerName + " adli oyuncu (PreLogin asamasinda) listede olmadigi icin girisi engellendi.");
         }
     }
 
-    // Bu metot, dışarıdan çağrılarak whitelist'in yeniden yüklenmesini sağlar.
     public void reloadWhitelist() {
-        plugin.getLogger().info("whitelist.txt dosyasi yeniden yükleniyor...");
-        // 1. Adım: Yeni listeyi hafızaya yükle
+        plugin.getLogger().info("Komut ile whitelist.txt dosyasi yeniden yükleniyor...");
         loadWhitelistFromFile();
 
-        // --- YENİ EKLENEN ENFORCE MANTIĞI ---
-        plugin.getLogger().info("Online oyuncular yeni whitelist'e göre kontrol ediliyor...");
-        
-        // Sunucudaki her bir online oyuncu için döngü başlat
-        plugin.getServer().getOnlinePlayers().forEach(player -> {
-            // Online oyuncunun adı yeni listede YOKSA...
-            if (!whitelistedNames.contains(player.getName())) {
-                // Oyuncuyu sunucudan at.
-                player.kick(Component.text("§cWhitelist'ten çikarildiniz."));
-                plugin.getLogger().info(player.getName() + " adli oyuncu, reload sonrasi listede olmadigi icin sunucudan atildi.");
-            }
-        });
-        // --- ENFORCE MANTIĞI SONU ---
+        // Not: Bu olay asenkron olduğu için, online oyuncuları kick'leme mantığı
+        // burada daha karmaşık olabilir. Şimdilik reload sadece listeyi günceller.
     }
 
     private void loadWhitelistFromFile() {
         try {
             File dataFolder = plugin.getDataFolder();
-            if (!dataFolder.exists()) {
-                dataFolder.mkdir();
-            }
+            if (!dataFolder.exists()) { dataFolder.mkdir(); }
 
             File whitelistFile = new File(dataFolder, "whitelist.txt");
             if (!whitelistFile.exists()) {
@@ -67,12 +60,13 @@ public class LoginListener implements Listener {
             }
 
             whitelistedNames.clear();
+            // Büyük/küçük harfe duyarlı kontrol için toLowerCase() yok.
             Set<String> names = Files.lines(whitelistFile.toPath())
                                     .map(String::trim)
                                     .filter(line -> !line.isEmpty())
                                     .collect(Collectors.toSet());
             whitelistedNames.addAll(names);
-            
+
             plugin.getLogger().info(whitelistedNames.size() + " oyuncu whitelist'e yüklendi.");
 
         } catch (IOException e) {

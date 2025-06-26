@@ -1,12 +1,18 @@
 name: TextWhitelist
-version: 1.0
-main: com.unicraft.whitelist.TextWhitelist
-api-version: '1.20'
+version: 2.0-beta
+main: io.github.cowboyoriginal.textwhitelist.TextWhitelist
 author: Cowboy-original
-description: Kullanici adlarini bir .txt dosyasindan okuyan basit bir whitelist eklentisi.
+description: A powerful text-file based whitelist with multiple modes and in-game management.
 commands:
   whitelistxt:
-    description: TextWhitelist eklentisinin ana komutu.
+    description: Main command for the TextWhitelist plugin.
     aliases: [wltxt]
     permission: textwhitelist.admin
-    permission-message: Bu komutu kullanmak icin yetkiniz yok.
+    permission-message: You do not have permission to use this command.
+    usage: |
+      §eTextWhitelist Commands:
+      §a/wltxt help §7- Shows this help message.
+      §a/wltxt <enable|disable> §7- Enables or disables the whitelist plugin.
+      §a/wltxt change <players|admins> §7- Changes the active whitelist mode.
+      §a/wltxt add <player|admin> <name> §7- Adds a player to the specified list.
+      §a/wltxt remove <player|admin> <name> §7- Removes a player from the specified list.

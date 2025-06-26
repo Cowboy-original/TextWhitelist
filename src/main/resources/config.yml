@@ -1,0 +1,5 @@
+# TextWhitelist Plugin Configuration
+
+# Set to false to completely disable the plugin's login checks.
+# This can be changed in-game with /wltxt enable|disable
+whitelist-enabled: true

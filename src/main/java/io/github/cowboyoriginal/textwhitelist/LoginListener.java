@@ -60,14 +60,14 @@ public class LoginListener implements Listener {
 
     public boolean removePlayer(String playerName, WhitelistMode mode) {
         Set<String> list = (mode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
-        if (list.remove(playerName)) { 
-            updateFileFromList(mode);   
+        if (list.remove(playerName)) {
+            updateFileFromList(mode);
             
             Player onlinePlayer = plugin.getServer().getPlayerExact(playerName);
             if (onlinePlayer != null) {
                 if (plugin.getCurrentMode() == mode) {
                     onlinePlayer.kickPlayer(ChatColor.RED + "You have been removed from the active whitelist.");
-                    plugin.getLogger().info("Kicked " + playerName + " because they were removed from the active list (" + mode + ").");
+                    plugin.getLogger().info("Kicked " + playerName + " because they were removed from the list.");
                 } else {
                     plugin.getLogger().info(playerName + " was removed from the inactive " + mode + " list and was not kicked.");
                 }
@@ -89,8 +89,15 @@ public class LoginListener implements Listener {
             Set<String> activeList = (currentMode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
             
             if (!activeList.contains(player.getName())) {
-                player.kickPlayer(ChatColor.YELLOW + "You are no longer on the active whitelist.");
-                plugin.getLogger().info("Kicked " + player.getName() + " (not on the reloaded active whitelist).");
+                String kickMessage;
+                if (currentMode == WhitelistMode.ADMINS) {
+                    kickMessage = ChatColor.GOLD + "The server is now in maintenance mode.";
+                } else {
+                    kickMessage = ChatColor.YELLOW + "You are no longer on the active whitelist.";
+                }
+                
+                player.kickPlayer(kickMessage);
+                plugin.getLogger().info("Kicked " + player.getName() + " (not on the reloaded active whitelist: " + currentMode + ").");
             }
         });
     }

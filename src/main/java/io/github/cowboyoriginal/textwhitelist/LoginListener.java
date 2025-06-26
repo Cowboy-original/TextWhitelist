@@ -67,6 +67,7 @@ public class LoginListener implements Listener {
     }
 
     public void reloadLists() {
+        plugin.getLogger().info("Reloading both whitelist files...");
         loadListFromFile(WhitelistMode.PLAYERS);
         loadListFromFile(WhitelistMode.ADMINS);
     }

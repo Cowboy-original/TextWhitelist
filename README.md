@@ -11,6 +11,7 @@ With a full suite of in-game commands, you can toggle the whitelist, switch betw
 -   **Dual Whitelist Modes:**
     -   **PLAYERS Mode:** Standard operation. Allows players listed in `players.txt`.
     -   **ADMINS Mode:** Maintenance mode. Only allows staff listed in `admins.txt`.
+-   **Instant Reloading:** Use `/wltxt reload` to apply changes to your `.txt` files instantly without a server restart.
 -   **Easy Mode Switching:** Instantly switch between modes with `/wltxt change <players|admins>`.
 -   **In-Game List Editing:** Add or remove players from `players.txt` or `admins.txt` directly with `/wltxt add` and `/wltxt remove`.
 -   **Wide Version Compatibility:** Built against the Spigot 1.8 API to ensure functionality across a vast range of Minecraft versions.

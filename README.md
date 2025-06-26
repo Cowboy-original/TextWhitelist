@@ -1,8 +1,8 @@
 # TextWhitelist
 
-A powerful, lightweight whitelist plugin for Spigot-based servers (Paper, Purpur, etc.) designed for wide compatibility (**1.8 - 1.21+**). It allows server owners to manage access using simple text files, making it ideal for offline-mode servers or communities that prefer easy, text-based management.
+Tired of managing a cumbersome `whitelist.json` file? TextWhitelist is a powerful, lightweight whitelist plugin designed for server administrators who prefer simple, text-file-based management. Built for wide compatibility (1.8 - 1.21+), it's the perfect solution for offline-mode servers or any community that needs to quickly manage player access without dealing with UUIDs.
 
-This plugin provides a full suite of in-game commands to manage whitelist modes, add/remove players, and even enable or disable the plugin on the fly without a server restart.
+With a full suite of in-game commands, you can toggle the whitelist, switch between a public player list and a staff-only maintenance mode, and add or remove users on the fly, all without needing a server restart.
 
 ## Features
 

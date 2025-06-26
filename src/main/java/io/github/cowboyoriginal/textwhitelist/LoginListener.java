@@ -1,6 +1,7 @@
 package io.github.cowboyoriginal.textwhitelist;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,7 +30,7 @@ public class LoginListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         if (!plugin.isWhitelistEnabled()) {
-            return; // If disabled in config, do nothing.
+            return;
         }
 
         String playerName = event.getName();
@@ -59,8 +60,18 @@ public class LoginListener implements Listener {
 
     public boolean removePlayer(String playerName, WhitelistMode mode) {
         Set<String> list = (mode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
-        if (list.remove(playerName)) {
-            updateFileFromList(mode);
+        if (list.remove(playerName)) { 
+            updateFileFromList(mode);   
+            
+            Player onlinePlayer = plugin.getServer().getPlayerExact(playerName);
+            if (onlinePlayer != null) {
+                if (plugin.getCurrentMode() == mode) {
+                    onlinePlayer.kickPlayer(ChatColor.RED + "You have been removed from the active whitelist.");
+                    plugin.getLogger().info("Kicked " + playerName + " because they were removed from the active list (" + mode + ").");
+                } else {
+                    plugin.getLogger().info(playerName + " was removed from the inactive " + mode + " list and was not kicked.");
+                }
+            }
             return true;
         }
         return false;
@@ -70,6 +81,18 @@ public class LoginListener implements Listener {
         plugin.getLogger().info("Reloading both whitelist files...");
         loadListFromFile(WhitelistMode.PLAYERS);
         loadListFromFile(WhitelistMode.ADMINS);
+
+        plugin.getLogger().info("Checking online players against the new whitelist...");
+        
+        plugin.getServer().getOnlinePlayers().forEach(player -> {
+            WhitelistMode currentMode = plugin.getCurrentMode();
+            Set<String> activeList = (currentMode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
+            
+            if (!activeList.contains(player.getName())) {
+                player.kickPlayer(ChatColor.YELLOW + "You are no longer on the active whitelist.");
+                plugin.getLogger().info("Kicked " + player.getName() + " (not on the reloaded active whitelist).");
+            }
+        });
     }
     
     private File getFileForMode(WhitelistMode mode) {
@@ -93,8 +116,9 @@ public class LoginListener implements Listener {
             list.addAll(Files.lines(file.toPath())
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
-                .collect(Collectors.toSet())); // Case-sensitive
+                .collect(Collectors.toSet()));
             plugin.getLogger().info("Loaded " + list.size() + " names from " + file.getName());
+
         } catch (IOException e) {
             plugin.getLogger().severe("Could not load " + file.getName() + "!");
             e.printStackTrace();

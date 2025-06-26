@@ -4,7 +4,7 @@
 
   <groupId>io.github.cowboyoriginal.textwhitelist</groupId>
   <artifactId>TextWhitelist</artifactId>
-  <version>2.1-beta</version> <packaging>jar</packaging>
+  <version>2.1-beta-hotfix</version> <packaging>jar</packaging>
 
   <name>TextWhitelist</name>
 

@@ -1,5 +1,5 @@
 name: TextWhitelist
-version: 2.2-beta
+version: 2.3
 main: io.github.cowboyoriginal.textwhitelist.TextWhitelist
 author: Cowboy-original
 description: A powerful text-file based whitelist with multiple modes and in-game management.

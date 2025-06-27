@@ -29,6 +29,7 @@ public class LoginListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        // If the plugin is disabled in the config, do nothing.
         if (!plugin.isWhitelistEnabled()) {
             return;
         }
@@ -65,11 +66,10 @@ public class LoginListener implements Listener {
             
             Player onlinePlayer = plugin.getServer().getPlayerExact(playerName);
             if (onlinePlayer != null) {
-                if (plugin.getCurrentMode() == mode) {
+                // KICK only if the plugin is enabled AND the player was removed from the active list!
+                if (plugin.isWhitelistEnabled() && plugin.getCurrentMode() == mode) {
                     onlinePlayer.kickPlayer(ChatColor.RED + "You have been removed from the active whitelist.");
                     plugin.getLogger().info("Kicked " + playerName + " because they were removed from the list.");
-                } else {
-                    plugin.getLogger().info(playerName + " was removed from the inactive " + mode + " list and was not kicked.");
                 }
             }
             return true;
@@ -82,24 +82,26 @@ public class LoginListener implements Listener {
         loadListFromFile(WhitelistMode.PLAYERS);
         loadListFromFile(WhitelistMode.ADMINS);
 
-        plugin.getLogger().info("Checking online players against the new whitelist...");
-        
-        plugin.getServer().getOnlinePlayers().forEach(player -> {
-            WhitelistMode currentMode = plugin.getCurrentMode();
-            Set<String> activeList = (currentMode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
+        // ONLY check online players if the plugin is enabled!
+        if (plugin.isWhitelistEnabled()) {
+            plugin.getLogger().info("Checking online players against the new whitelist...");
             
-            if (!activeList.contains(player.getName())) {
-                String kickMessage;
-                if (currentMode == WhitelistMode.ADMINS) {
-                    kickMessage = ChatColor.GOLD + "The server is now in maintenance mode.";
-                } else {
-                    kickMessage = ChatColor.YELLOW + "You are no longer on the active whitelist.";
-                }
+            plugin.getServer().getOnlinePlayers().forEach(player -> {
+                WhitelistMode currentMode = plugin.getCurrentMode();
+                Set<String> activeList = (currentMode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
                 
-                player.kickPlayer(kickMessage);
-                plugin.getLogger().info("Kicked " + player.getName() + " (not on the reloaded active whitelist: " + currentMode + ").");
-            }
-        });
+                if (!activeList.contains(player.getName())) {
+                    // Determine the kick message based on the current mode.
+                    String kickMessage = (currentMode == WhitelistMode.ADMINS) ? 
+                        ChatColor.GOLD + "The server is now in maintenance mode." : 
+                        ChatColor.YELLOW + "You are no longer on the active whitelist.";
+                    player.kickPlayer(kickMessage);
+                    plugin.getLogger().info("Kicked " + player.getName() + " (not on the reloaded active whitelist: " + currentMode + ").");
+                }
+            });
+        } else {
+            plugin.getLogger().info("Plugin is disabled, skipping online player check.");
+        }
     }
     
     private File getFileForMode(WhitelistMode mode) {
@@ -110,7 +112,6 @@ public class LoginListener implements Listener {
     private void loadListFromFile(WhitelistMode mode) {
         File file = getFileForMode(mode);
         Set<String> list = (mode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
-
         try {
             if (!plugin.getDataFolder().exists()) {
                 plugin.getDataFolder().mkdir();
@@ -120,10 +121,7 @@ public class LoginListener implements Listener {
             }
 
             list.clear();
-            list.addAll(Files.lines(file.toPath())
-                .map(String::trim)
-                .filter(line -> !line.isEmpty())
-                .collect(Collectors.toSet()));
+            list.addAll(Files.lines(file.toPath()).map(String::trim).filter(line -> !line.isEmpty()).collect(Collectors.toSet()));
             plugin.getLogger().info("Loaded " + list.size() + " names from " + file.getName());
 
         } catch (IOException e) {
@@ -135,7 +133,6 @@ public class LoginListener implements Listener {
     private void updateFileFromList(WhitelistMode mode) {
         File file = getFileForMode(mode);
         Set<String> list = (mode == WhitelistMode.PLAYERS) ? playerWhitelist : adminWhitelist;
-
         try {
             Files.write(file.toPath(), list, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {

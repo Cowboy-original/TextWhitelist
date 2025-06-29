@@ -20,7 +20,7 @@ This plugin evolves beyond a simple whitelist into a full-fledged access managem
 ## 🚀 Installation
 
 1.  Download the latest `.jar` file from the [**Releases**](https://github.com/Cowboy-original/TextWhitelist/releases) page.
-2.  Place the `TextWhitelist-2.0.jar` file into your server's `plugins` directory.
+2.  Place the `TextWhitelist.jar` file into your server's `plugins` directory.
 3.  Restart your server. The plugin will automatically generate a `TextWhitelist` folder inside your `plugins` directory.
 
 ## 💻 Commands & Usage

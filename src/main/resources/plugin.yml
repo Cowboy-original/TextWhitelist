@@ -1,8 +1,8 @@
 name: TextWhitelist
-version: 2.3
+version: 3.0-beta
 main: io.github.cowboyoriginal.textwhitelist.TextWhitelist
 author: Cowboy-original
-description: A powerful text-file based whitelist with multiple modes and in-game management.
+description: A powerful text-file based whitelist with multiple modes and full in-game management.
 commands:
   whitelistxt:
     description: Main command for the TextWhitelist plugin.
@@ -11,9 +11,9 @@ commands:
     permission-message: You do not have permission to use this command.
     usage: |
       §eTextWhitelist Commands:
-      §a/wltxt help §7- Shows this help message.
-      §a/wltxt reload §7- Reloads both whitelist files from disk.
-      §a/wltxt <enable|disable> §7- Enables or disables the whitelist plugin.
+      §a/wltxt help §7- Shows a detailed help message.
+      §a/wltxt list [players|admins|all] [page] §7- Lists players on the whitelist.
       §a/wltxt change <players|admins> §7- Changes the active whitelist mode.
-      §a/wltxt add <player|admin> <name> §7- Adds a player to the specified list.
-      §a/wltxt remove <player|admin> <name> §7- Removes a player from the specified list.
+      §a/wltxt add <player|admin> <name> §7- Adds a player to a list.
+      §a/wltxt remove <player|admin> <name> §7- Removes a player from a list.
+      §a/wltxt <enable|disable> §7- Enables or disables the whitelist plugin.

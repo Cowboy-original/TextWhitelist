@@ -4,7 +4,7 @@
 
   <groupId>io.github.cowboyoriginal.textwhitelist</groupId>
   <artifactId>TextWhitelist</artifactId>
-  <version>2.3</version> <packaging>jar</packaging>
+  <version>3.0-beta</version> <packaging>jar</packaging>
 
   <name>TextWhitelist</name>
 
@@ -13,6 +13,10 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
+
+  <build>
+    <finalName>${project.name}</finalName>
+  </build>
 
   <repositories>
       <repository>
